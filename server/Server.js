@@ -21,7 +21,11 @@ app.post("/lists", (req, res) => {
       console.log("Insert Successful", list);
       res.status(200).send(list);
     })
-    .catch(e => res.status(400).send(e));
+    .catch(e => res.status(404).send(e));
 });
 
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
+
+module.exports = {
+  app
+};
