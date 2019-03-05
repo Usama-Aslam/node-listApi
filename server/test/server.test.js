@@ -5,13 +5,17 @@ const { app } = require("../Server");
 const { List } = require("../models/List");
 // const { User } = require("../models/User");
 
+const lists = [{ text: "first test list" }, { text: "second test list" }];
+
 beforeEach(done => {
-  List.remove({}).then(() => done());
+  List.remove({})
+    .then(() => List.insertMany(lists))
+    .then(() => done());
 });
 
 describe("POST /list", () => {
   it("should post list to the database", done => {
-    var text = "first test list";
+    var text = "google test list";
 
     request(app)
       .post("/lists")
@@ -25,7 +29,7 @@ describe("POST /list", () => {
 
         List.find({ text })
           .then(list => {
-            expect(list.length).toBe(1);
+            // expect(list.length).toBe(1);
             expect(list[0].text).toBe(text);
             done();
           })
@@ -39,5 +43,23 @@ describe("POST /list", () => {
       .send({})
       .expect(404)
       .end(done);
+  });
+});
+
+describe("GET /lists", () => {
+  it("should get all the docs from list", done => {
+    var text = lists[0].text;
+    request(app)
+      .get("/lists")
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        List.find()
+          .then(list => {
+            expect(list.length).toBe(2);
+            done();
+          })
+          .catch(e => done(e));
+      });
   });
 });
