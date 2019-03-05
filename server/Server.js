@@ -6,7 +6,7 @@ const { mongoose } = require("./db/mongoose");
 const { List } = require("./models/List");
 const { User } = require("./models/User");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(bodyParse.json());
@@ -21,6 +21,12 @@ app.post("/lists", (req, res) => {
       console.log("Insert Successful", list);
       res.status(200).send(list);
     })
+    .catch(e => res.status(404).send(e));
+});
+
+app.get("/lists", (req, res) => {
+  List.find()
+    .then(lists => res.status(200).send({ lists }))
     .catch(e => res.status(404).send(e));
 });
 
