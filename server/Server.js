@@ -45,6 +45,20 @@ app.get("/lists/:id", (req, res) => {
     .catch(e => res.status(404).send(e));
 });
 
+app.delete("/lists/:id", (req, res) => {
+  const id = req.params.id;
+  if (!ObjectID.isValid(id))
+    return res.status(400).send({ error: "invalid list" });
+
+  List.findByIdAndRemove(id)
+    .then(list => {
+      if (!list) return res.status(404).send({ error: "list not found" });
+
+      res.status(200).send({ list });
+    })
+    .catch(e => res.status(404).send(e));
+});
+
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
 module.exports = {
