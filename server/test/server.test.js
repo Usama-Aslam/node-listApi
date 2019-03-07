@@ -98,3 +98,29 @@ describe("GET /lists/:id", () => {
       .end(done);
   });
 });
+
+describe("DELETE /lists/:id", () => {
+  it("should delete a particular list item from the collection", done => {
+    var hexId = lists[0]._id.toHexString();
+
+    request(app)
+      .delete(`/lists/${hexId}`)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        List.findById(hexId)
+          .then(list => {
+            if (!list) return done();
+          })
+          .catch(e => done(e));
+      });
+  });
+
+  it("should return 400 for invalid id", done => {
+    request(app)
+      .get("/lists/12354")
+      .expect(400)
+      .end(done);
+  });
+});

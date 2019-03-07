@@ -50,7 +50,7 @@ app.delete("/lists/:id", (req, res) => {
   if (!ObjectID.isValid(id))
     return res.status(400).send({ error: "invalid list" });
 
-  List.findByIdAndRemove(id)
+  List.findByIdAndRemove(id, { useFindAndModify: false })
     .then(list => {
       if (!list) return res.status(404).send({ error: "list not found" });
 
