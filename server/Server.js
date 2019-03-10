@@ -59,6 +59,28 @@ app.delete("/lists/:id", (req, res) => {
     .catch(e => res.status(404).send(e));
 });
 
+app.patch("/lists/:id", (req, res) => {
+  var id = req.params.id;
+  if (!ObjectID.isValid(id))
+    return res.status(400).send({ error: "invalid list" });
+
+  const body = _.pick(req.body, ["text", "completed", "category"]);
+
+  if (_.isBoolean(body.completed) && body.completed) {
+    body.completed = true;
+    body.completedAt = new Date().getTime();
+  } else {
+    body.completed = false;
+    body.completedAt = null;
+  }
+
+  List.findByIdAndUpdate(id, { $set: body }, { new: true }).then(list => {
+    if (!list) return res.status(404).send({ error: "list not found" });
+
+    res.status(200).send({ list });
+  });
+});
+
 app.listen(PORT, () => console.log(`Server running at ${PORT}`));
 
 module.exports = {
